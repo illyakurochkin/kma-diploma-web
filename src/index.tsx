@@ -1,17 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {ApolloProvider} from "@apollo/client";
+import client from "./apolloClient";
+import {BrowserRouter, Route} from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css'
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Home from "./Home";
+import {ToastProvider} from "react-toast-notifications";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+ReactDOM.render((
+    <ApolloProvider client={client}>
+      <ToastProvider>
+        <BrowserRouter>
+          <Route path="/" component={Home} />
+        </BrowserRouter>
+      </ToastProvider>
+    </ApolloProvider>
+  ),
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

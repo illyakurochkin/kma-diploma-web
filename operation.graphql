@@ -1,0 +1,59 @@
+query GetHomePageData($query: String, $categoriesIds: [String!]) {
+    products: getProducts(options: {query: $query, categoriesIds: $categoriesIds}) {
+        id
+        name
+        description
+        price
+        photo
+
+        categories {
+            name
+            description
+        }
+    }
+
+    categories: getCategories {
+        id
+        name
+        description
+
+        subcategories {
+            id
+            name
+            description
+
+            subcategories {
+                id
+                name
+                description
+            }
+        }
+    }
+}
+
+query GetProductPageData($productId: String!) {
+    product: getProductById(productId: $productId) {
+        id
+        name
+        price
+        description
+        photo
+
+        categories {
+            id
+            name
+        }
+
+        compatibleProducts {
+            id
+            name
+            photo
+        }
+    }
+}
+
+mutation CreateOrder($email: String!, $items: [OrderItemInput!]!) {
+    createOrder(options: {email: $email, items: $items}) {
+        id
+    }
+}
