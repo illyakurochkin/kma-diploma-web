@@ -1,0 +1,170 @@
+"""
+Direct the client to resolve this field locally, either from the cache or local resolvers.
+"""
+directive @client(
+  """
+  When true, the client will never use the cache for this value. See
+  https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
+  """
+  always: Boolean
+) on FIELD | FRAGMENT_DEFINITION | INLINE_FRAGMENT
+
+"""
+Export this locally resolved field as a variable to be used in the remainder of this query. See
+https://www.apollographql.com/docs/react/essentials/local-state/#using-client-fields-as-variables
+"""
+directive @export(
+  """The variable name to export this field as."""
+  as: String!
+) on FIELD
+
+"""
+Specify a custom store key for this result. See
+https://www.apollographql.com/docs/react/advanced/caching/#the-connection-directive
+"""
+directive @connection(
+  """Specify the store key."""
+  key: String!
+
+  """
+  An array of query argument names to include in the generated custom store key.
+  """
+  filter: [String!]
+) on FIELD
+
+type Category {
+  id: String!
+  parentCategoryId: String
+  name: String!
+  description: String!
+  products: [Product!]!
+  subcategories: [Category!]!
+}
+
+type Product {
+  id: String!
+  name: String!
+  description: String!
+  photo: String!
+  price: Float!
+  categoriesIds: [String!]!
+  categories: [Category!]!
+  compatibleProducts: [Product!]!
+  compatibleGroups: [CompatibleGroup!]!
+}
+
+type CompatibleGroup {
+  id: String!
+  description: String!
+  productsIds: [String!]!
+  products: [Product!]!
+}
+
+type OrderItem {
+  productId: String!
+  amount: Int!
+  product: Product!
+}
+
+type Order {
+  id: String!
+  email: String!
+  date: DateTime!
+  items: [OrderItem!]!
+}
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
+input GetCategoriesInput {
+  parentCategoryId: String!
+}
+
+input CreateCategoryInput {
+  name: String!
+  description: String!
+  parentCategoryId: String
+}
+
+input UpdateCategoryInput {
+  id: String!
+  parentCategoryId: String
+  name: String!
+  description: String!
+}
+
+input CreateCompatibleGroupInput {
+  description: String!
+  productsIds: [String!]!
+}
+
+input UpdateCompatibleGroupInput {
+  id: String!
+  description: String!
+  productsIds: [String!]!
+}
+
+input OrderItemInput {
+  productId: String!
+  amount: Int!
+}
+
+input CreateOrderInput {
+  email: String!
+  items: [OrderItemInput!]!
+}
+
+input GetProductsInput {
+  query: String
+  minPrice: Float
+  maxPrice: Float
+  categoriesIds: [String!] = []
+  compatibleProductsIds: [String!] = []
+}
+
+input CreateProductInput {
+  name: String!
+  description: String!
+  price: Float!
+  photo: String!
+  categoriesIds: [String!] = []
+}
+
+input UpdateProductInput {
+  id: String!
+  name: String!
+  description: String!
+  photo: String!
+  price: Float!
+  categoriesIds: [String!] = []
+}
+
+type Query {
+  getCategories(options: GetCategoriesInput): [Category!]!
+  getCategoryById(categoryId: String!): Category!
+  getCompatibleGroupById(compatibleGroupId: String!): CompatibleGroup!
+  getCompatibleGroups(productId: String): [CompatibleGroup!]!
+  getOrderById(orderId: String!): Order!
+  getOrders(email: String): [Order!]!
+  getProducts(options: GetProductsInput = {categoriesIds: [], compatibleProductsIds: []}): [Product!]!
+  getProductById(productId: String!): Product!
+}
+
+type Mutation {
+  createCategory(options: CreateCategoryInput!): Category!
+  updateCategory(options: UpdateCategoryInput!): Category!
+  deleteCategory(categoryId: String!): Void
+  deleteCompatibleGroup(compatibleGroupId: String!): Void!
+  createCompatibleGroup(options: CreateCompatibleGroupInput!): CompatibleGroup!
+  updateCompatibleGroup(options: UpdateCompatibleGroupInput!): CompatibleGroup!
+  deleteOrder(orderId: String!): Void!
+  createOrder(options: CreateOrderInput!): Order!
+  createProduct(options: CreateProductInput!): Product!
+  updateProduct(options: UpdateProductInput!): Product!
+  deleteProduct(productId: String!): Void
+}
+
+"""Represents NULL values"""
+scalar Void

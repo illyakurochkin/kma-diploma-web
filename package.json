@@ -35,7 +35,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate": "graphql-codegen",
-    "download-schema": "apollo client:download-schema --config=apollo.config.js schema.graphql"
+    "download-schema": "apollo client:download-schema --config=apollo.config.js schema.graphql",
+    "deploy": "gcloud app deploy app.yaml"
   },
   "eslintConfig": {
     "extends": [
